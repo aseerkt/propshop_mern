@@ -6,7 +6,7 @@ import products from '../products';
 
 function ProductScreen() {
   const params = useParams();
-  const product = products.find((pdt) => pdt._id == params.id);
+  const product = products.find((pdt) => pdt._id === params.id);
   return (
     <>
       <Link to='/' className='btn btn-light my-3'>
