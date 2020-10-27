@@ -1,22 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { Row, Col, Image, ListGroup, Card, Button } from 'react-bootstrap';
+import { useParams, Link, useHistory } from 'react-router-dom';
+import {
+  Row,
+  Col,
+  Image,
+  ListGroup,
+  Card,
+  Button,
+  FormControl,
+} from 'react-bootstrap';
 import Rating from '../components/Rating';
 import { useDispatch, useSelector } from 'react-redux';
 import { listProductDetails } from '../actions/productActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import { formatCount } from '../utils/countFormat';
 
 function ProductScreen() {
-  const params = useParams();
+  const [qty, setQty] = useState(1);
+  const { id } = useParams();
+  const history = useHistory();
   const dispatch = useDispatch();
   const productDetails = useSelector((state) => state.productDetails);
   const { loading, error, product } = productDetails;
-  // const [product, setProduct] = useState({});
 
   useEffect(() => {
-    dispatch(listProductDetails(params.id));
-  }, [dispatch, params.id]);
+    dispatch(listProductDetails(id));
+  }, [dispatch, id]);
+
+  const addToCartHandler = (e) => {
+    history.push(`/cart/${id}?qty=${qty}`);
+  };
+
   return (
     <>
       <Link to='/' className='btn btn-light my-3'>
@@ -42,9 +57,11 @@ function ProductScreen() {
                   text={`${product.numReviews} reviews`}
                 />
               </ListGroup.Item>
-              <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
               <ListGroup.Item>
-                Description: ${product.description}
+                <strong>Price:</strong> ${product.price}
+              </ListGroup.Item>
+              <ListGroup.Item>
+                <strong>Description:</strong> {product.description}
               </ListGroup.Item>
             </ListGroup>
           </Col>
@@ -65,11 +82,34 @@ function ProductScreen() {
                     </Col>
                   </Row>
                 </ListGroup.Item>
+                {product.countInStock > 0 && (
+                  <ListGroup.Item>
+                    <Row className='align-items-center'>
+                      <Col>Quantity</Col>
+                      <Col>
+                        <FormControl
+                          autoFocus
+                          size='sm'
+                          type='number'
+                          min='1'
+                          value={qty}
+                          step='1'
+                          onChange={(e) => {
+                            setQty(e.target.value);
+                          }}
+                          onKeyDown={(e) => e.preventDefault()}
+                          max={product.countInStock}
+                        />
+                      </Col>
+                    </Row>
+                  </ListGroup.Item>
+                )}
                 <ListGroup.Item>
                   <Button
                     block
                     type='button'
                     disabled={product.countInStock === 0}
+                    onClick={addToCartHandler}
                   >
                     Add to Cart
                   </Button>
