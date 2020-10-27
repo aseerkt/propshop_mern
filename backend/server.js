@@ -1,4 +1,5 @@
 import express from 'express';
+import logger from 'morgan';
 import 'dotenv/config.js';
 import 'colors';
 import connectDB from './config/db.js';
@@ -9,6 +10,8 @@ import { errorHandler, notFound } from './middlewares/errorMiddlewares.js';
 connectDB();
 
 const app = express();
+
+app.use(logger('dev'));
 
 app.get('/', (_req, res) => res.send('API is running'));
 
