@@ -14,7 +14,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { listProductDetails } from '../actions/productActions';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
-import { formatCount } from '../utils/countFormat';
 
 function ProductScreen() {
   const [qty, setQty] = useState(1);
